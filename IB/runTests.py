@@ -170,7 +170,7 @@ class PyRelVals(IBThreadBase):
         try:
             if(experimental): # Enable experimental partial logging
                 try:
-                    add_arg = self.cmd.split("--args ")[1]
+                    add_arg = re.sub('"\s*$',"",re.sub('^\s*"',"",self.cmd.split("--args ")[1]))
                 except IndexError:
                     add_arg = ""
                 self.cmd = 'true'
