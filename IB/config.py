@@ -99,7 +99,8 @@ def _memorySizeGB():
       out = "8"
     if not out.isdigit():
       out = 8
-    count = int(int(out)/(1024*1024*1024))
+    from math import ceil
+    count = int(ceil(int(out)/(1024*1024*1024)))
     if count == 0: count =1
     return count
 
