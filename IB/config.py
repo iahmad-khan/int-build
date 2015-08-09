@@ -92,15 +92,15 @@ def _memorySizeGB():
     if platform == "darwin":
       cmd = "sysctl -n hw.memsize"
     elif platform.startswith("linux"):
-      cmd = "free -t -b | grep '^Mem: *' | awk '{print $2}'"
+      cmd = "free -t -m | grep '^Mem: *' | awk '{print $2}'"
     error, out = getstatusoutput(cmd)
     if error:
       print "Warning: unable to detect memory info. Using 8GB as default value"
-      out = "8"
+      return 8
     if not out.isdigit():
-      out = 8
+      return 8
     from math import ceil
-    count = int(ceil(int(out)/(1024*1024*1024)))
+    count = int(ceil(float(out)/1024))
     if count == 0: count =1
     return count
 
