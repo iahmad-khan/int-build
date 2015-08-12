@@ -183,9 +183,7 @@ def setDefaults(cycle, tcTag=None):
   if cycle.startswith('4.2'):
     Configuration[cycle]['RelValArgs'] = Configuration[cycle]['RelValArgs'].replace("--useInput all","")
   if cycle.startswith('7.'):
-    prefix = ""
-    if "slc6" in environ["SCRAM_ARCH"]:
-      prefix = "--prefix 'timeout 3600 '"
+    prefix = "--prefix 'timeout 3600 '"
     Configuration[cycle]['RelValArgs'] += " --job-reports --command \\\""+threaded+" --customise Validation/Performance/TimeMemorySummary.customiseWithTimeMemorySummary " + prefix + " \\\" --das-options '--cache " + environ["CMSBUILD_BUILD_DIR"] + "/das-cache.file' "
     if "ROOT6" in cycle:
       Configuration[cycle]['RelValArgs'] += " -j 6 "
