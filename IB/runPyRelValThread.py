@@ -23,10 +23,10 @@ def runThreadMatrix(basedir, logger, workflow, args=''):
   if len(outfolders)==0: return
   outfolder = outfolders[0]
   ret, out=getstatusoutput("cd " + os.path.join(workdir,outfolder) + " ; find . -name '*.root' -o -name '*.py' -type f | xargs rm -rf")
-  if ret: print ret
-  logger.updateRelValMatrixPartialLogs(workdir, outfolder)
+  print out
   ret, out=getstatusoutput("rm -rf " + os.path.join(basedir,outfolder) + " ; mv "+os.path.join(workdir,outfolder)+" "+basedir)
   ret, out=getstatusoutput("mv "+os.path.join(workdir,"runall-report-step*.log")+" "+os.path.join(basedir,outfolder,"workflow.log"))
+  logger.updateRelValMatrixPartialLogs(basedir, outfolder)
   shutil.rmtree(workdir)
   return
 
