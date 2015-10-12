@@ -164,7 +164,6 @@ class PyRelVals(IBThreadBase):
     def run(self):
         IBThreadBase.run(self)
         experimental = re.match("^slc7_", os.environ["SCRAM_ARCH"]) is not None
-	experimental = False
         if(experimental): # Enable experimental partial logging
             from runPyRelValThread import PyRelValsThread
             pyrelval = PyRelValsThread(8, 'pyRelval')
