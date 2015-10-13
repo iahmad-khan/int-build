@@ -35,9 +35,13 @@ class PyRelValsThread(object):
     self.jobs = jobs
     self.basedir = basedir
 
-  def startWorkflows(self, logger, workflows='', add_args=''):
+  def startWorkflows(self, logger, add_args='', workflows=''):
+    add_args = add_args.replace('\\"','"')
+    print "Extra Args>>",add_args
     workflowsCmd = "runTheMatrix.py -n "+workflows+" | grep -E '^[0-9].*\.[0-9][0-9]?' | sort -nr | awk '{print $1}'"
+    print "RunTheMatrix>>",workflowsCmd
     cmsstat, workflows = getstatusoutput(workflowsCmd)
+    print workflows
     if not cmsstat:
       workflows = workflows.split("\n")
     else:
