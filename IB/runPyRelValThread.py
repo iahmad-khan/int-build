@@ -21,12 +21,13 @@ def runThreadMatrix(basedir, logger, workflow, args=''):
     print "runPyRelVal> ERROR during test PyReleaseValidation, workflow "+str(workflow)+" : caught exception: " + str(e)
   outfolders = [file for file in os.listdir(workdir) if re.match("^" + str(workflow) + "_", file)]
   if len(outfolders)==0: return
-  outfolder = outfolders[0]
-  ret, out=getstatusoutput("cd " + os.path.join(workdir,outfolder) + " ; find . -name '*.root' -o -name '*.py' -type f | xargs rm -rf")
+  outfolder = os.path.join(basedir,outfolders[0])
+  wfdir     = os.path.join(workdir,outfolders[0])
+  ret, out=getstatusoutput("rm -rf " + outfolder + "; mkdir -p " + outfolder)
+  ret, out=getstatusoutput("cd " + wfdir + " ; find . -mindepth 1 -maxdepth 1 -name '*.log' -o -name '*.py' -o -name 'cmdLog' -type f | xargs -i mv '{}' "+outfolder+"/")
   print out
-  ret, out=getstatusoutput("rm -rf " + os.path.join(basedir,outfolder) + " ; mv "+os.path.join(workdir,outfolder)+" "+basedir)
-  ret, out=getstatusoutput("mv "+os.path.join(workdir,"runall-report-step*.log")+" "+os.path.join(basedir,outfolder,"workflow.log"))
-  logger.updateRelValMatrixPartialLogs(basedir, outfolder)
+  ret, out=getstatusoutput("mv "+os.path.join(workdir,"runall-report-step*.log")+" "+os.path.join(outfolder,"workflow.log"))
+  logger.updateRelValMatrixPartialLogs(basedir, outfolders[0])
   shutil.rmtree(workdir)
   return
 
