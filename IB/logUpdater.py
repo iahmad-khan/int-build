@@ -180,7 +180,8 @@ class LogUpdater(BuilderBase):
 
         if not os.path.exists(tgtDir) and not self.dryRun:
             try:
-                os.makedirs(tgtDir)
+                if not 'slc7_amd64' in tgtDir:
+                  os.makedirs(tgtDir)
             except:
                 print "ERROR: could not create tgtDir for logs: "+tgtDir
                 pass
@@ -206,7 +207,8 @@ class LogUpdater(BuilderBase):
             cmd = "cd "+fromDir+"; tar cf - "+what+' | (cd '+tgtDir+'; tar xf - ) '
 
         try:
-            self.doCmd(cmd)
+            if not 'slc7_amd64' in tgtDir:
+              self.doCmd(cmd)
         except Exception, e:
             print "Ignoring exception during copyLogs:", str(e)
             pass
