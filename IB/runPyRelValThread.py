@@ -65,11 +65,11 @@ class PyRelValsThread(object):
       else:
         time.sleep(5)
     for t in threads: t.join()
-    self.update_runall(os.path.join(self.basedir,"runall-report-step123-.log"),os.path.join(self.basedir,'*','workflow.log'))
+    self.update_runall()
     self.parseLog()
     return
 
-  def update_runall(self,outFileName,inFileReg):
+  def update_runall(self):
     outFile    = open(os.path.join(self.basedir,"runall-report-step123-.log"),"w")
     status_ok  = []
     status_err = []
