@@ -79,7 +79,6 @@ class PyRelValsThread(object):
     for logFile in glob.glob(self.basedir+'/*/workflow.log'):
       inFile = open(logFile)
       for line in inFile:
-        print line
         if re.match(".* tests passed, .*",line):
           res = line.strip().split(" tests passed, ")
           res[0] = res[0].split()
