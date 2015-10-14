@@ -103,23 +103,25 @@ class PyRelValsThread(object):
 
   def parseLog(self):
     logData = {}
-    logRE = re.compile('^([1-9][0-9]*\.[0-9]+)[^/]+/step([1-9])_.*\.log$')
+    logRE = re.compile('^.*/([1-9][0-9]*\.[0-9]+)[^/]+/step([1-9])_.*\.log$')
     max_steps = 0
     for logFile in glob.glob(self.basedir+'/[1-9]*/step[0-9]*.log'):
       m = logRE.match(logFile)
       if not m: continue
       wf = m.group(1)
-      step = int(m.group(2)) - 1
+      step = int(m.group(2))
       if step>max_steps: max_steps=step
       if not logData.has_key(wf):
         logData[wf] = {'steps': {}, 'events' : [], 'failed' : [], 'warning' : []}
+      if not logData[wf]['steps'].has_key(step):
         logData[wf]['steps'][step]=logFile
-    for wk in logData:
-      for k in logData[wf].keys():
+    for wf in logData:
+      for k in logData[wf]:
         if k == 'steps': continue
         for s in range(0, max_steps):
           logData[wf][k].append(-1)
-      for step in logData[wf]['steps']:
+      index =0
+      for step in sorted(logData[wf]['steps']):
         warn = 0
         err = 0
         rd = 0
@@ -129,10 +131,11 @@ class PyRelValsThread(object):
           if '%MSG-e' in line: err += 1
           if 'Begin processing the ' in line: rd += 1
         inFile.close()
-        logData[wf]['events'][step] = rd
-        logData[wf]['failed'][step] = err
-        logData[wf]['warning'][step] = warn
-        del logData[wf]['steps']
+        logData[wf]['events'][index] = rd
+        logData[wf]['failed'][index] = err
+        logData[wf]['warning'][index] = warn
+        index+=1
+      del logData[wf]['steps']
 
     from pickle import Pickler
     outFile = open(os.path.join(self.basedir,'runTheMatrixMsgs.pkl'), 'w')
