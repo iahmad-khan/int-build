@@ -53,7 +53,7 @@ class PyRelValsThread(object):
   def __init__(self, jobs, basedir, jobid="1of1"):
     self.jobs = jobs
     self.basedir = basedir
-    self.jobid=jobib
+    self.jobid=jobid
 
   def startWorkflows(self, logger, add_args='', workflows=''):
     from commands import getstatusoutput
