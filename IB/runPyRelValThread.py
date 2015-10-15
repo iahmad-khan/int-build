@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-import os, glob, re, shutil, time, threading
+import os, sys, glob, re, shutil, time, threading
 
 def doCmd(cmd, dryRun=False, inDir=None):
     if not inDir:
