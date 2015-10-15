@@ -1,6 +1,30 @@
 #! /usr/bin/env python
 import os, glob, re, shutil, time, threading
-from doCmd import doCmd, ActionError
+
+def doCmd(cmd, dryRun=False, inDir=None):
+    if not inDir:
+        print "--> "+time.asctime()+ " in ", os.getcwd() ," executing ", cmd
+    else:
+        print "--> "+time.asctime()+ " in " + inDir + " executing ", cmd
+        cmd = "cd " + inDir + "; "+cmd
+
+    sys.stdout.flush()
+    sys.stderr.flush()
+    start = time.time()
+    ret = 0
+    while cmd.endswith(";"): cmd=cmd[:-1]
+    if dryRun:
+        print "DryRun for: "+cmd
+    else:
+        from commands import getstatusoutput
+        ret, outX = getstatusoutput(cmd)
+        if outX: print outX
+
+    stop = time.time()
+    print "--> "+time.asctime()+" cmd took", stop-start, "sec. ("+time.strftime("%H:%M:%S",time.gmtime(stop-start))+")"
+    sys.stdout.flush()
+    sys.stderr.flush()
+    return ret
 
 def runThreadMatrix(basedir, logger, workflow, args=''):
   workdir = os.path.join(basedir, workflow)
