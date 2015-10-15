@@ -122,8 +122,6 @@ class LogUpdater(BuilderBase):
         destination = os.path.join(self.webTargetDir,'pyRelValPartialLogs') 
         print "\n--> going to copy pyrelval partial matrix logs to", destination, '... \n'
         self.copyLogs(dirToSend, partialSubDir, destination,  True,self.cmsswBuildDir)
-        self.copyLogs('runall*.log', partialSubDir, destination,  True,self.cmsswBuildDir)
-
         return
         
     # --------------------------------------------------------------------------------

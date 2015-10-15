@@ -50,9 +50,10 @@ def runThreadMatrix(basedir, logger, workflow, args=''):
   return
 
 class PyRelValsThread(object):
-  def __init__(self, jobs, basedir):
+  def __init__(self, jobs, basedir, jobid="1of1"):
     self.jobs = jobs
     self.basedir = basedir
+    self.jobid=jobib
 
   def startWorkflows(self, logger, add_args='', workflows=''):
     from commands import getstatusoutput
@@ -85,6 +86,8 @@ class PyRelValsThread(object):
       else:
         time.sleep(5)
     for t in threads: t.join()
+    ret, out = getstatusoutput("touch "+basedir+"/done."+self.jobid)
+    logger.updateRelValMatrixPartialLogs(basedir, "done."self.jobid)
     self.update_runall()
     self.parseLog()
     return
