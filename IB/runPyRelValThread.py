@@ -43,7 +43,7 @@ def runThreadMatrix(basedir, logger, workflow, args=''):
   outfolder = os.path.join(basedir,outfolders[0])
   wfdir     = os.path.join(workdir,outfolders[0])
   ret = doCmd("rm -rf " + outfolder + "; mkdir -p " + outfolder)
-  ret = doCmd("find . -mindepth 1 -maxdepth 1 -name '*.log' -o -name '*.py' -o -name 'cmdLog' -type f | xargs -i mv '{}' "+outfolder+"/", False, wfdir)
+  ret = doCmd("find . -mindepth 1 -maxdepth 1 -name '*.xml' -o -name '*.log' -o -name '*.py' -o -name 'cmdLog' -type f | xargs -i mv '{}' "+outfolder+"/", False, wfdir)
   ret = doCmd("mv "+os.path.join(workdir,"runall-report-step*.log")+" "+os.path.join(outfolder,"workflow.log"))
   logger.updateRelValMatrixPartialLogs(basedir, outfolders[0])
   shutil.rmtree(workdir)
