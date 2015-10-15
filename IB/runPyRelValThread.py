@@ -1,32 +1,26 @@
 #! /usr/bin/env python
-import os, sys, glob, re, shutil, time, threading
-from commands import getstatusoutput
-import cmd
+import os, glob, re, shutil, time, threading
+from doCmd import doCmd, ActionError
 
 def runThreadMatrix(basedir, logger, workflow, args=''):
   workdir = os.path.join(basedir, workflow)
-  matrixCmd = 'cd '+workdir+' ; runTheMatrix.py -l ' + workflow +' '+args
+  matrixCmd = 'runTheMatrix.py -l ' + workflow +' '+args
   try:
     if not os.path.isdir(workdir):
       os.makedirs(workdir)
   except Exception, e: 
     print "runPyRelVal> ERROR during test PyReleaseValidation, workflow "+str(workflow)+" : can't create thread folder: " + str(e)
   try:
-    print "Running>> ",matrixCmd
-    ret, outX = getstatusoutput(matrixCmd)
-    if ret:
-      print "runPyRelVal> ERROR during test PyReleaseValidation, workflow "+str(workflow)+" : runTheMatrix exit with code: " + str(ret)
-    if outX: print outX
+    ret = doCmd(matrixCmd, False, workdir)
   except Exception, e:
     print "runPyRelVal> ERROR during test PyReleaseValidation, workflow "+str(workflow)+" : caught exception: " + str(e)
   outfolders = [file for file in os.listdir(workdir) if re.match("^" + str(workflow) + "_", file)]
   if len(outfolders)==0: return
   outfolder = os.path.join(basedir,outfolders[0])
   wfdir     = os.path.join(workdir,outfolders[0])
-  ret, out=getstatusoutput("rm -rf " + outfolder + "; mkdir -p " + outfolder)
-  ret, out=getstatusoutput("cd " + wfdir + " ; find . -mindepth 1 -maxdepth 1 -name '*.log' -o -name '*.py' -o -name 'cmdLog' -type f | xargs -i mv '{}' "+outfolder+"/")
-  print out
-  ret, out=getstatusoutput("mv "+os.path.join(workdir,"runall-report-step*.log")+" "+os.path.join(outfolder,"workflow.log"))
+  ret = doCmd("rm -rf " + outfolder + "; mkdir -p " + outfolder)
+  ret = doCmd("find . -mindepth 1 -maxdepth 1 -name '*.log' -o -name '*.py' -o -name 'cmdLog' -type f | xargs -i mv '{}' "+outfolder+"/", False, wfdir)
+  ret = doCmd("mv "+os.path.join(workdir,"runall-report-step*.log")+" "+os.path.join(outfolder,"workflow.log"))
   logger.updateRelValMatrixPartialLogs(basedir, outfolders[0])
   shutil.rmtree(workdir)
   return
@@ -37,6 +31,7 @@ class PyRelValsThread(object):
     self.basedir = basedir
 
   def startWorkflows(self, logger, add_args='', workflows=''):
+    from commands import getstatusoutput
     add_args = add_args.replace('\\"','"')
     print "Extra Args>>",add_args
     workflowsCmd = "runTheMatrix.py -n "+workflows+" | grep -E '^[0-9].*\.[0-9][0-9]?' | sort -nr | awk '{print $1}'"
