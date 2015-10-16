@@ -34,10 +34,12 @@ def runThreadMatrix(basedir, logger, workflow, args=''):
       os.makedirs(workdir)
   except Exception, e: 
     print "runPyRelVal> ERROR during test PyReleaseValidation, workflow "+str(workflow)+" : can't create thread folder: " + str(e)
+  wftime = time.time()
   try:
     ret = doCmd(matrixCmd, False, workdir)
   except Exception, e:
     print "runPyRelVal> ERROR during test PyReleaseValidation, workflow "+str(workflow)+" : caught exception: " + str(e)
+  wftime = time.time() - wftime
   outfolders = [file for file in os.listdir(workdir) if re.match("^" + str(workflow) + "_", file)]
   if len(outfolders)==0: return
   outfolder = os.path.join(basedir,outfolders[0])
@@ -45,6 +47,7 @@ def runThreadMatrix(basedir, logger, workflow, args=''):
   ret = doCmd("rm -rf " + outfolder + "; mkdir -p " + outfolder)
   ret = doCmd("find . -mindepth 1 -maxdepth 1 -name '*.xml' -o -name '*.log' -o -name '*.py' -o -name 'cmdLog' -type f | xargs -i mv '{}' "+outfolder+"/", False, wfdir)
   ret = doCmd("mv "+os.path.join(workdir,"runall-report-step*.log")+" "+os.path.join(outfolder,"workflow.log"))
+  ret = doCmd("echo " + str(wftime) +" > " + os.path.join(outfolder,"time.log"))
   logger.updateRelValMatrixPartialLogs(basedir, outfolders[0])
   shutil.rmtree(workdir)
   return
